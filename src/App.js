@@ -38,14 +38,17 @@ export default class App extends Component {
                 model={this.state.model}
                 onModelChange={this.handleModelChange}
                 config={{
-                placeholderText: 'Metin giriniz',
-                charCounterCount: "true",
-                events : {
-                  'focus' : function(e, editor) {
-                    console.log("focus");
+                  placeholderText: 'Metin giriniz',
+                  charCounterCount: "true",
+                  
+                  events : {
+                    'focus' : function(e, editor) {
+                      console.log("focus");
+                    }
                   }
-                }
-              }}
+
+                  
+                }}
 
 				  />
       </div>
