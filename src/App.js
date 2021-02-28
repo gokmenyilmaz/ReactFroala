@@ -15,10 +15,12 @@ export default class App extends Component {
   render() {
     return (
       <div style={{width:800,height:500,margin:"auto"}}>
-        	<FroalaEditor style={{height:500}}
-				
-				
-				/>
+        	<FroalaEditor config={{
+                placeholderText: 'Metin giriniz',
+                charCounterCount: "true"
+              }}
+
+				  />
       </div>
     )
   }
