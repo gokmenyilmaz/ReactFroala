@@ -12,12 +12,39 @@ import 'font-awesome/css/font-awesome.css';
 import FroalaEditor from 'react-froala-wysiwyg';
 
 export default class App extends Component {
+
+  constructor () {
+    super();
+
+    this.handleModelChange = this.handleModelChange.bind(this);
+
+    this.state = {
+      model: 'Example text'
+    };
+  }
+
+  handleModelChange=model=> {
+    this.setState({
+      model: model
+    });
+  }
+  
+
+
   render() {
     return (
       <div style={{width:800,height:500,margin:"auto"}}>
-        	<FroalaEditor config={{
+        	<FroalaEditor 
+                model={this.state.model}
+                onModelChange={this.handleModelChange}
+                config={{
                 placeholderText: 'Metin giriniz',
-                charCounterCount: "true"
+                charCounterCount: "true",
+                events : {
+                  'focus' : function(e, editor) {
+                    console.log("focus");
+                  }
+                }
               }}
 
 				  />
