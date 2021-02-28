@@ -14,8 +14,8 @@ import FroalaEditor from 'react-froala-wysiwyg';
 export default class App extends Component {
   render() {
     return (
-      <div>
-        	<FroalaEditor
+      <div style={{width:800,height:500,margin:"auto"}}>
+        	<FroalaEditor style={{height:500}}
 				
 				
 				/>
