@@ -14,28 +14,23 @@ import FroalaEditor from 'react-froala-wysiwyg';
 
 import Froalaeditor from 'froala-editor';
 
-const veri={data:"cccc"}
-
-Froalaeditor.DefineIcon('insert', {NAME: 'plus', SVG_KEY: 'add'});
-Froalaeditor.RegisterCommand('insert', {
-  title: 'Insert HTML',
-  focus: true,
-  undo: true,
-  refreshAfterCallback: true,
-  callback: function () {
-
-    alert("veri");
-    this.html.insert(veri.data);
-  }
-});
-
 
 export default class App extends Component {
 
   config= {
     placeholderText: 'Metin giriniz',
-    toolbarButtons: [['undo', 'redo' , 'bold'], ['alert', 'clear', 'insert']]
-  }
+    toolbarButtons: [['undo', 'redo' , 'bold'], ['alert', 'clear']],
+    events: {
+      'keyup': (keydownEvent)=> {
+        const f = this.myRef.current;
+        const { offsetTop: spanY } = f.editor.selection.element();
+        if(spanY==0) return;
+            this.setState({
+          top: spanY+50
+        })
+    
+      
+  }}}
 
   
  
@@ -46,40 +41,56 @@ export default class App extends Component {
     this.handleModelChange = this.handleModelChange.bind(this);
 
     this.state = {
-      model: ''
+      model: '',
+      top:0
     };
 
     this.myRef = React.createRef();
-
 
   }
 
   componentDidMount()
   {
-    const froala = this.myRef;
+  
 
   }
 
   handleModelChange=model=> {
     this.setState({
-      model: model
+      model: model,
+    
     });
   }
   
+  ekle=()=>
+  {
+ 
+
+    const f = this.myRef.current;
+    f.editor.html.insert(" <a href='http://ankara.edu.tr'>ankara</a>");
+
+
+
+  }
 
 
   render() {
     return (
       <div style={{width:800,height:500,margin:"auto"}}>
 
+       
 
+        <div style={{position:"relative"}}>
 
-        	<FroalaEditor ref={this.myRef}
-                model={this.state.model}
-                onModelChange={this.handleModelChange}
-                config={this.config}
-            
-				  />
+          <button id="btn" ref={this.myBtnRef} style={{position:"absolute",top:this.state.top,right:-45}} onClick={()=>this.ekle()}>Ekle</button>
+          <FroalaEditor ref={this.myRef}
+                  model={this.state.model}
+                  onModelChange={this.handleModelChange}
+                  config={this.config}
+              
+            />
+        </div>
+        
       </div>
     )
   }
