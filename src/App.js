@@ -75,7 +75,10 @@ export default class App extends Component {
     var ek = prompt("EkNo giriniz", "");
 
     const f = this.myRef.current;
-    f.editor.html.insert(" " + ek);
+
+    let metin="<a href='www.saglik.gov.tr'>" + ek + "</a>";
+
+    f.editor.html.insert(" " +  metin);
 
 
 
