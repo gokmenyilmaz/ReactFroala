@@ -25,12 +25,19 @@ export default class App extends Component {
         const f = this.myRef.current;
         const { offsetTop: spanY } = f.editor.selection.element();
         if(spanY==0) return;
-            this.setState({
-          top: spanY+50
-        })
-    
-      
-  }}}
+        
+        this.setState({ top: spanY+45 })
+      },
+      'click' : (e, editor)=> {
+        const f = this.myRef.current;
+        const { offsetTop: spanY } = f.editor.selection.element();
+        if(spanY==0) return;
+        
+        this.setState({ top: spanY+45 })
+      }
+
+    }
+ }
 
   
  
@@ -42,7 +49,7 @@ export default class App extends Component {
 
     this.state = {
       model: '',
-      top:0
+      top:50
     };
 
     this.myRef = React.createRef();
@@ -82,7 +89,9 @@ export default class App extends Component {
 
         <div style={{position:"relative"}}>
 
-          <button id="btn" ref={this.myBtnRef} style={{position:"absolute",top:this.state.top,right:-45}} onClick={()=>this.ekle()}>Ekle</button>
+          <button id="btn" ref={this.myBtnRef} 
+          style={{position:"absolute", top:this.state.top,right:0, zIndex:300 }} 
+          onClick={()=>this.ekle()}>--İlişik Ekle</button>
           <FroalaEditor ref={this.myRef}
                   model={this.state.model}
                   onModelChange={this.handleModelChange}
