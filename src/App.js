@@ -72,9 +72,10 @@ export default class App extends Component {
   ekle=()=>
   {
  
+    var ek = prompt("EkNo giriniz", "");
 
     const f = this.myRef.current;
-    f.editor.html.insert(" <a href='http://ankara.edu.tr'>ankara</a>");
+    f.editor.html.insert(" " + ek);
 
 
 
