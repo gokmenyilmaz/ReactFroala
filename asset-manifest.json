@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/ReactFroala/static/css/main.2ae47eeb.chunk.css",
-    "main.js": "/ReactFroala/static/js/main.7ee2ab8c.chunk.js",
-    "main.js.map": "/ReactFroala/static/js/main.7ee2ab8c.chunk.js.map",
+    "main.js": "/ReactFroala/static/js/main.58c1477e.chunk.js",
+    "main.js.map": "/ReactFroala/static/js/main.58c1477e.chunk.js.map",
     "runtime-main.js": "/ReactFroala/static/js/runtime-main.4e04da1d.js",
     "runtime-main.js.map": "/ReactFroala/static/js/runtime-main.4e04da1d.js.map",
     "static/css/2.4ad156ba.chunk.css": "/ReactFroala/static/css/2.4ad156ba.chunk.css",
@@ -21,6 +21,6 @@
     "static/css/2.4ad156ba.chunk.css",
     "static/js/2.12496923.chunk.js",
     "static/css/main.2ae47eeb.chunk.css",
-    "static/js/main.7ee2ab8c.chunk.js"
+    "static/js/main.58c1477e.chunk.js"
   ]
 }
