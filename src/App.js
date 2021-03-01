@@ -95,8 +95,10 @@ export default class App extends Component {
 
         <div style={{position:"relative"}}>
 
-          <button id="btn" ref={this.myBtnRef} 
-          style={{position:"absolute", top:this.state.top,right:0, zIndex:300 }} 
+          <button id="btn"  ref={this.myBtnRef} 
+          style={{position:"absolute", top:this.state.top,right:0, borderColor:"coral", zIndex:300,
+          boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
+          background:"red",color:"white" }} 
           onClick={()=>this.ekle()}>--İlişik Ekle</button>
           <FroalaEditor ref={this.myRef}
                   model={this.state.model}
