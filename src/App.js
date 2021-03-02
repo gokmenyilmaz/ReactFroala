@@ -22,18 +22,12 @@ export default class App extends Component {
     toolbarButtons: [['undo', 'redo' , 'bold'], ['alert', 'clear']],
     events: {
       'keyup': (keydownEvent)=> {
-        const f = this.myRef.current;
-        const { offsetTop: spanY } = f.editor.selection.element();
-        if(spanY==0) return;
-        
-        this.setState({ top: spanY+45 })
+        let cev=this.getCaretCoordinates();
+        this.setState({ top: cev.y })
       },
       'click' : (e, editor)=> {
-        const f = this.myRef.current;
-        const { offsetTop: spanY } = f.editor.selection.element();
-        if(spanY==0) return;
-        
-        this.setState({ top: spanY+45 })
+        let cev=this.getCaretCoordinates();
+        this.setState({ top: cev.y })
       }
 
     }
@@ -70,6 +64,44 @@ export default class App extends Component {
     
     });
   }
+
+
+   getCaretCoordinates=()=> {
+    let x = 0,
+      y = 0;
+    const isSupported = typeof window.getSelection !== "undefined";
+    if (isSupported) {
+      const selection = window.getSelection();
+      // Check if there is a selection (i.e. cursor in place)
+      if (selection.rangeCount !== 0) {
+        // Clone the range
+        const range = selection.getRangeAt(0).cloneRange();
+        // Collapse the range to the start, so there are not multiple chars selected
+        range.collapse(true);
+        // getCientRects returns all the positioning information we need
+        const rect = this.rangeRect(range);
+        if (rect) {
+          x = rect.left; // since the caret is only 1px wide, left == right
+          y = rect.top; // top edge of the caret
+        }
+      }
+    }
+    return { x, y };
+  }
+
+  rangeRect=(r)=>{
+    let rect = r.getBoundingClientRect();
+    if (r.collapsed && rect.top===0 && rect.left===0) {
+      let tmpNode = document.createTextNode('\ufeff');
+      r.insertNode(tmpNode);
+      rect = r.getBoundingClientRect();
+      tmpNode.remove();
+    }
+    return rect;
+  }
+  
+  
+
   
   ekle=()=>
   {
