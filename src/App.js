@@ -22,12 +22,14 @@ export default class App extends Component {
     toolbarButtons: [['undo', 'redo' , 'bold'], ['alert', 'clear']],
     events: {
       'keyup': (keydownEvent)=> {
+
+        console.log(this);
         let cev=this.getCaretCoordinates();
-        this.setState({ top: cev.y })
+        this.setState({ top: cev.y-40 })
       },
       'click' : (e, editor)=> {
         let cev=this.getCaretCoordinates();
-        this.setState({ top: cev.y })
+        this.setState({ top: cev.y-40 })
       }
 
     }
@@ -66,7 +68,9 @@ export default class App extends Component {
   }
 
 
+   
    getCaretCoordinates=()=> {
+     
     let x = 0,
       y = 0;
     const isSupported = typeof window.getSelection !== "undefined";
@@ -79,27 +83,29 @@ export default class App extends Component {
         // Collapse the range to the start, so there are not multiple chars selected
         range.collapse(true);
         // getCientRects returns all the positioning information we need
-        const rect = this.rangeRect(range);
+         const rects = range.getClientRects();
+        if(!rects.length) {
+          // probably new line buggy behavior
+          if(range.startContainer && range.collapsed) {
+            // explicitely select the contents
+            range.selectNodeContents(range.startContainer);
+          }
+        }
+        const rect = range.getBoundingClientRect();
         if (rect) {
           x = rect.left; // since the caret is only 1px wide, left == right
-          y = rect.top; // top edge of the caret
+          y = rect.top +  window.scrollY; // top edge of the caret
+
+
+        
+
         }
       }
     }
+
+    console.log(x,y);
     return { x, y };
   }
-
-  rangeRect=(r)=>{
-    let rect = r.getBoundingClientRect();
-    if (r.collapsed && rect.top===0 && rect.left===0) {
-      let tmpNode = document.createTextNode('\ufeff');
-      r.insertNode(tmpNode);
-      rect = r.getBoundingClientRect();
-      tmpNode.remove();
-    }
-    return rect;
-  }
-  
   
 
   
@@ -121,25 +127,20 @@ export default class App extends Component {
 
   render() {
     return (
-      <div style={{width:800,height:500,margin:"auto"}}>
-
-       
-
-        <div style={{position:"relative"}}>
-
+      <div style={{width:800,height:500,margin:"auto",position:"relative"}}>
           <button id="btn"  ref={this.myBtnRef} accesskey="h"
           style={{position:"absolute", top:this.state.top,right:0, borderColor:"coral", zIndex:300,
           boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
           background:"red",color:"white" }} 
           onClick={()=>this.ekle()}>--İlişik Ekle (alt+h)</button>
+
           <FroalaEditor ref={this.myRef}
                   model={this.state.model}
                   onModelChange={this.handleModelChange}
                   config={this.config}
               
             />
-        </div>
-        
+    
       </div>
     )
   }
