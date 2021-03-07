@@ -7,8 +7,7 @@ import "froala-editor/js/froala_editor.pkgd.min.js";
 import "froala-editor/css/froala_style.min.css";
 import "froala-editor/css/froala_editor.pkgd.min.css";
 
-import { Button } from "react-bootstrap";
-import { Modal } from "react-bootstrap";
+import { Button, Card, Modal } from "react-bootstrap";
 
 // Require Font Awesome.
 import "font-awesome/css/font-awesome.css";
@@ -42,14 +41,19 @@ export default class App extends Component {
     this.handleModelChange = this.handleModelChange.bind(this);
 
     this.state = {
-      model: "",
+      textMetin: "",
       top: 50,
       isShow: false,
+      yukluDosyalar: [],
+      ekListe: [],
+      referansListe: [],
     };
 
     this.myRef = React.createRef();
 
-    this.state.model =
+    this.state.yukluDosyalar.push("sddd");
+
+    this.state.textMetin =
       "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.";
   }
 
@@ -57,8 +61,60 @@ export default class App extends Component {
 
   handleModelChange = (model) => {
     this.setState({
-      model: model,
+      textMetin: model,
     });
+  };
+
+  dosyaYukle = () => {
+    let dosyalar = this.state.yukluDosyalar;
+    var dosya = prompt("Yüklenecek Dosya Adı");
+    dosyalar.push(dosya);
+
+    this.setState({ yukluDosyalar: dosyalar });
+  };
+
+  dosyaSil = (item) => {
+    let dosyalar = this.state.yukluDosyalar;
+
+    let index = dosyalar.indexOf(item);
+
+    dosyalar.splice(index, 1);
+
+    this.setState({ yukluDosyalar: dosyalar });
+  };
+
+  ekEkle = () => {
+    let liste = this.state.ekListe;
+
+    let ekModel = { ad: "ek adı", yukluDosya: "dosya" };
+    liste.push(ekModel);
+
+    this.setState({ ekListe: liste });
+  };
+
+  ekSil = (item) => {
+    let liste = this.state.ekListe;
+
+    let index = liste.indexOf(item);
+    liste.splice(index, 1);
+    this.setState({ ekListe: liste });
+  };
+
+  referansEkle = () => {
+    let liste = this.state.referansListe;
+
+    let ekModel = { ad: "ref ek adı", yukluDosya: "dosya" };
+    liste.push(ekModel);
+
+    this.setState({ referansEkle: liste });
+  };
+
+  referansSil = (item) => {
+    let liste = this.state.referansListe;
+
+    let index = liste.indexOf(item);
+    liste.splice(index, 1);
+    this.setState({ referansListe: liste });
   };
 
   getCaretCoordinates = () => {
@@ -105,8 +161,7 @@ export default class App extends Component {
   };
 
   handleClose = () => {
-
-    let ek="dddd";
+    let ek = "dddd";
 
     this.setState({ isShow: false });
 
@@ -117,13 +172,11 @@ export default class App extends Component {
     f.editor.html.insert(" " + metin);
 
     console.log("kapatıldı");
-  }
-  
-  handleShow = ()=> {
-    this.setState({ isShow: true });
-    console.log("sho");
+  };
 
-  } 
+  handleShow = () => {
+    this.setState({ isShow: true });
+  };
 
   render() {
     return (
@@ -135,29 +188,83 @@ export default class App extends Component {
           position: "relative",
         }}
       >
-        <Modal  size="lg"
-         show={this.state.isShow} onHide={this.handleClose}>
+        <Modal size="lg" show={this.state.isShow} onHide={this.handleClose}>
           <Modal.Header closeButton>
             <Modal.Title>Ek ve Refereanslar</Modal.Title>
           </Modal.Header>
-          <Modal.Body   >
-            <div className="card" style={{background:"yellow", margin:5, padding:8}}>
-              Ek Dosya listesi
-            </div>
-
-            <div  style={{display:'flex'}}>
-              <div className="card" style={{height:400, margin:5,padding:8,  width:"50%"}}>
-                  sol
+          <Modal.Body>
+            <div style={{ display: "flex", margin: 4 }}>
+              <div
+                style={{
+                  width: "90%",
+                  border: "1px solid gray",
+                  padding: 8,
+                  display: "flex",
+                }}
+              >
+                {this.state.yukluDosyalar.map((item) => (
+                  <article
+                    style={{
+                      display: "flex",
+                      margin: 4,
+                      padding: 4,
+                      border: "1px solid gray",
+                    }}
+                  >
+                    <Button
+                      onClick={() => this.dosyaSil(item)}
+                      variant="danger"
+                      size="sm"
+                    >
+                      x
+                    </Button>
+                    <div style={{ marginLeft: 4 }}> {item}</div>
+                  </article>
+                ))}
               </div>
 
-              <div className="card" style={{margin:5, padding:8, width:"50%"}}>
-                  sağ
-              </div>
+              <Button
+                variant="outline-primary"
+                style={{ width: "10%", marginLeft: 10 }}
+                onClick={() => this.dosyaYukle()}
+              >
+                Dosya Yükle
+              </Button>
             </div>
 
+            <div style={{ display: "flex" }}>
+              <Card border="success"  style={{ margin: 5, width: '50%', height:300 }}>
+                <Card.Header>
+                  Ekler
+                  <Button onClick={()=>this.ekEkle()} size="sm" style={{ float: "right", margin: 0 }}>
+                    + Ekle
+                  </Button>
+                </Card.Header>
+                <Card.Body>
+               
+                <div style={{width:"50%"}}>
+                  ddddddddddddd
+                </div>
+               
+                </Card.Body>
+              </Card>
 
-
-
+              <Card border="success "  style={{ margin: 5, width: '50%' }}>
+                <Card.Header>
+                  Referanslar
+                  <Button onClick={()=>this.referansEkle()} size="sm" style={{ float: "right", margin: 0 }}>
+                    + Ekle
+                  </Button>
+                </Card.Header>
+                <Card.Body style={{width:"50%"}}>
+                
+                <div>
+                  ddddddddddddd
+                </div>
+                
+                </Card.Body>
+              </Card>
+            </div>
           </Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={this.handleClose}>
@@ -191,7 +298,7 @@ export default class App extends Component {
 
         <FroalaEditor
           ref={this.myRef}
-          model={this.state.model}
+          model={this.state.textMetin}
           onModelChange={this.handleModelChange}
           config={this.config}
         />
