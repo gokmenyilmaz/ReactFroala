@@ -193,10 +193,12 @@ export default class App extends Component {
             <Modal.Title>Ek ve Refereanslar</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <div style={{ display: "flex", margin: 4 }}>
-              <div
+            <section style={{ display: "flex", margin: 4 }}>
+              <nav
                 style={{
-                  width: "90%",
+                  display: "flex",
+                  flexDirection: "row",
+                  width: "100%",
                   border: "1px solid gray",
                   padding: 8,
                   display: "flex",
@@ -221,7 +223,7 @@ export default class App extends Component {
                     <div style={{ marginLeft: 4 }}> {item}</div>
                   </article>
                 ))}
-              </div>
+              </nav>
 
               <Button
                 variant="outline-primary"
@@ -230,50 +232,90 @@ export default class App extends Component {
               >
                 Dosya Yükle
               </Button>
-            </div>
+            </section>
 
-            <div style={{ display: "flex" }}>
-              <Card border="success"  style={{ margin: 5, width: '50%', height:300 }}>
+            <section style={{ display: "flex" }}>
+              <Card
+                border="success"
+                style={{ margin: 5, width: "50%", height: 300 }}
+              >
                 <Card.Header>
                   Ekler
-                  <Button onClick={()=>this.ekEkle()} size="sm" style={{ float: "right", margin: 0 }}>
+                  <Button
+                    onClick={() => this.ekEkle()}
+                    size="sm"
+                    style={{ float: "right", margin: 0 }}
+                  >
                     + Ekle
                   </Button>
                 </Card.Header>
                 <Card.Body>
-               
-                <div style={{width:"50%"}}>
-                  ddddddddddddd
-                </div>
-               
+                  <ul
+                    style={{
+                      padding:0,
+                      display: "flex",    
+                      flexWrap: "wrap",
+                      listStyle: "none",
+                    }}
+                  >
+                    {this.state.ekListe.map((item) => (
+                      <li style={{display: "flex" }}>
+                        <article style={{display: "flex", margin:10}}>
+                          <Button 
+                            onClick={() => this.ekSil(item)}
+                            variant="danger"
+                            size="sm"
+                          >
+                            x
+                          </Button>
+                          <div style={{ marginLeft: 4 }}> {item.ad}</div>
+                        </article>
+                      </li>
+                    ))}
+                  </ul>
                 </Card.Body>
               </Card>
 
-              <Card border="success "  style={{ margin: 5, width: '50%' }}>
+              <Card border="success " style={{ margin: 5, width: "50%" }}>
                 <Card.Header>
                   Referanslar
-                  <Button onClick={()=>this.referansEkle()} size="sm" style={{ float: "right", margin: 0 }}>
+                  <Button
+                    onClick={() => this.referansEkle()}
+                    size="sm"
+                    style={{ float: "right", margin: 0 }}
+                  >
                     + Ekle
                   </Button>
                 </Card.Header>
-                <Card.Body style={{width:"50%"}}>
-                
-                <div>
-                  ddddddddddddd
-                </div>
-                
+                <Card.Body style={{ width: "50%" }}>
+                <ul
+                    style={{
+                      padding:0,
+                      display: "flex",    
+                      flexWrap: "wrap",
+                      listStyle: "none",
+                    }}
+                  >
+                    {this.state.referansListe.map((item) => (
+                      <li style={{display: "flex" }}>
+                        <article style={{display: "flex", margin:10}}>
+                          <Button 
+                            onClick={() => this.referansSil(item)}
+                            variant="danger"
+                            size="sm"
+                          >
+                            x
+                          </Button>
+                          <div style={{ marginLeft: 4 }}> {item.ad}</div>
+                        </article>
+                      </li>
+                    ))}
+                  </ul>
                 </Card.Body>
               </Card>
-            </div>
+            </section>
           </Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={this.handleClose}>
-              İptal
-            </Button>
-            <Button variant="primary" onClick={this.handleClose}>
-              Tamam
-            </Button>
-          </Modal.Footer>
+         
         </Modal>
 
         <button
