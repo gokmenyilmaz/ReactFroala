@@ -7,7 +7,7 @@ import "froala-editor/js/froala_editor.pkgd.min.js";
 import "froala-editor/css/froala_style.min.css";
 import "froala-editor/css/froala_editor.pkgd.min.css";
 
-import { Button, Card, Modal } from "react-bootstrap";
+import { Button, Card, Modal, Form, Row, Col } from "react-bootstrap";
 
 // Require Font Awesome.
 import "font-awesome/css/font-awesome.css";
@@ -44,14 +44,18 @@ export default class App extends Component {
       textMetin: "",
       top: 50,
       isShow: false,
+      isShowEkForm: false,
+      isShowRefForm: false,
       yukluDosyalar: [],
       ekListe: [],
       referansListe: [],
+      ekFormModel:{}
     };
 
     this.myRef = React.createRef();
 
-    this.state.yukluDosyalar.push("sddd");
+    this.state.yukluDosyalar.push("1.pdf");
+    this.state.yukluDosyalar.push("2.pdf");
 
     this.state.textMetin =
       "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.";
@@ -83,15 +87,6 @@ export default class App extends Component {
     this.setState({ yukluDosyalar: dosyalar });
   };
 
-  ekEkle = () => {
-    let liste = this.state.ekListe;
-
-    let ekModel = { ad: "ek adı", yukluDosya: "dosya" };
-    liste.push(ekModel);
-
-    this.setState({ ekListe: liste });
-  };
-
   ekSil = (item) => {
     let liste = this.state.ekListe;
 
@@ -100,22 +95,7 @@ export default class App extends Component {
     this.setState({ ekListe: liste });
   };
 
-  referansEkle = () => {
-    let liste = this.state.referansListe;
-
-    let ekModel = { ad: "ref ek adı", yukluDosya: "dosya" };
-    liste.push(ekModel);
-
-    this.setState({ referansEkle: liste });
-  };
-
-  referansSil = (item) => {
-    let liste = this.state.referansListe;
-
-    let index = liste.indexOf(item);
-    liste.splice(index, 1);
-    this.setState({ referansListe: liste });
-  };
+ 
 
   getCaretCoordinates = () => {
     let x = 0,
@@ -150,7 +130,7 @@ export default class App extends Component {
     return { x, y };
   };
 
-  ekle = () => {
+  dosyaEkle = () => {
     var ek = prompt("EkNo giriniz", "");
 
     const f = this.myRef.current;
@@ -178,6 +158,75 @@ export default class App extends Component {
     this.setState({ isShow: true });
   };
 
+
+  handleEkFormModelChange = (fieldName,value) => {
+
+    console.log(fieldName,value);
+
+    var ekFormModelData=this.state.ekFormModel;
+    ekFormModelData[fieldName]=value;
+
+    this.setState({
+      ekFormModel: ekFormModelData
+    });
+  };
+
+
+
+  ekEkleShowForm = () => {
+    this.setState({ isShowEkForm: true });
+  };
+
+  refEkleShowForm = () => {
+    this.setState({ isShowRefForm: true });
+  };
+
+
+
+
+  referansSil = (item) => {
+    let liste = this.state.referansListe;
+
+    let index = liste.indexOf(item);
+    liste.splice(index, 1);
+    this.setState({ referansListe: liste });
+  };
+
+  handleCloseEkForm = (onayText) => {
+    this.setState({ isShowEkForm: false });
+
+    var formData=this.state.ekFormModel;
+
+    console.log(formData);
+
+    if (onayText !== "Ok") return;
+
+    let liste = this.state.ekListe;
+
+    let ekModel = { Sayi: formData.Sayi, yukluDosya: "" };
+    liste.push(ekModel);
+
+    this.setState({ ekListe: liste });
+  };
+
+
+  handleCloseRefForm = (onayText) => {
+    this.setState({ isShowRefForm: false });
+
+    var formData=this.state.ekFormModel;
+
+    console.log(formData);
+
+    if (onayText !== "Ok") return;
+
+    let liste = this.state.referansListe;
+
+    let ekModel = { Sayi: formData.Sayi, yukluDosya: "" };
+    liste.push(ekModel);
+
+    this.setState({ referansListe: liste });
+  };
+
   render() {
     return (
       <div
@@ -188,6 +237,128 @@ export default class App extends Component {
           position: "relative",
         }}
       >
+        <Modal
+          show={this.state.isShowEkForm}
+          onHide={() => this.handleCloseEkForm("Cancel")}
+          animation={false}
+        >
+          <Modal.Header closeButton>
+            <Modal.Title>Ek Formu</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Form>
+              <Row>
+                <Col>
+                  <Form.Group inline controlId="exampleForm.ControlInput1">
+                    <Form.Label>Sıra No</Form.Label>
+                    <Form.Control type="text" placeholder="" />
+                  </Form.Group>
+                </Col>
+
+                <Col>
+                  <Form.Group controlId="exampleForm.ControlSelect1">
+                    <Form.Label>Dosya Seç</Form.Label>
+                    <Form.Control as="select">
+                      <option>1.pdf</option>
+                      <option>2.pdf</option>
+                    </Form.Control>
+                  </Form.Group>
+                </Col>
+
+                <Col/>
+              </Row>
+
+              <Row>
+                <Col>
+                  <Form.Group controlId="exampleForm.ControlInput1">
+                    <Form.Label>Tarihi</Form.Label>
+                    <Form.Control type="date" placeholder="" />
+                  </Form.Group>
+                </Col>
+                <Col>
+                  <Form.Group controlId="exampleForm.ControlSelect1">
+                    <Form.Label>Sayı</Form.Label>
+                    <Form.Control type="text" 
+                      onChange={(e)=>this.handleEkFormModelChange("Sayi",e.target.value)}  placeholder="" />
+                  </Form.Group>
+                </Col>
+
+                <Col>
+                  <Form.Group controlId="exampleForm.ControlTextarea1">
+                    <Form.Label>Sayfa Adedi</Form.Label>
+                    <Form.Control inline type="number" placeholder="" />
+                  </Form.Group>
+                </Col>
+              </Row>
+
+              <Form.Group controlId="exampleForm.ControlTextarea1">
+                <Form.Label>Mahiyeti</Form.Label>
+                <Form.Control as="textarea" rows={3} />
+              </Form.Group>
+            </Form>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button
+              variant="secondary"
+              onClick={() => this.handleCloseEkForm("Cancel")}
+            >
+              İptal
+            </Button>
+            <Button
+              variant="primary"
+              onClick={() => this.handleCloseEkForm("Ok")}
+            >
+              Tamam
+            </Button>
+          </Modal.Footer>
+        </Modal>
+
+
+        <Modal
+          show={this.state.isShowRefForm}
+          onHide={() => this.handleCloseRefForm("Cancel")}
+          animation={false}
+        >
+          <Modal.Header closeButton>
+            <Modal.Title>Ek Formu</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Form>
+              <Row>
+                <Col>
+                <Form.Group controlId="exampleForm.ControlSelect1">
+                    <Form.Label>Sayı</Form.Label>
+                    <Form.Control type="text" 
+                      onChange={(e)=>this.handleEkFormModelChange("Sayi",e.target.value)}  placeholder="" />
+                  </Form.Group>
+                </Col>
+
+                <Col/>
+              </Row>
+
+             
+
+            
+            </Form>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button
+              variant="secondary"
+              onClick={() => this.handleCloseRefForm("Cancel")}
+            >
+              İptal
+            </Button>
+            <Button
+              variant="primary"
+              onClick={() => this.handleCloseRefForm("Ok")}
+            >
+              Tamam
+            </Button>
+          </Modal.Footer>
+        </Modal>
+
+
+
         <Modal size="lg" show={this.state.isShow} onHide={this.handleClose}>
           <Modal.Header closeButton>
             <Modal.Title>Ek ve Refereanslar</Modal.Title>
@@ -242,7 +413,7 @@ export default class App extends Component {
                 <Card.Header>
                   Ekler
                   <Button
-                    onClick={() => this.ekEkle()}
+                    onClick={() => this.ekEkleShowForm()}
                     size="sm"
                     style={{ float: "right", margin: 0 }}
                   >
@@ -252,23 +423,23 @@ export default class App extends Component {
                 <Card.Body>
                   <ul
                     style={{
-                      padding:0,
-                      display: "flex",    
+                      padding: 0,
+                      display: "flex",
                       flexWrap: "wrap",
                       listStyle: "none",
                     }}
                   >
                     {this.state.ekListe.map((item) => (
-                      <li style={{display: "flex" }}>
-                        <article style={{display: "flex", margin:10}}>
-                          <Button 
+                      <li style={{ display: "flex" }}>
+                        <article style={{ display: "flex", margin: 10 }}>
+                          <Button
                             onClick={() => this.ekSil(item)}
                             variant="danger"
                             size="sm"
                           >
                             x
                           </Button>
-                          <div style={{ marginLeft: 4 }}> {item.ad}</div>
+                          <div style={{ marginLeft: 4 }}> {item.Sayi}</div>
                         </article>
                       </li>
                     ))}
@@ -280,7 +451,7 @@ export default class App extends Component {
                 <Card.Header>
                   Referanslar
                   <Button
-                    onClick={() => this.referansEkle()}
+                    onClick={() => this.refEkleShowForm()}
                     size="sm"
                     style={{ float: "right", margin: 0 }}
                   >
@@ -288,25 +459,25 @@ export default class App extends Component {
                   </Button>
                 </Card.Header>
                 <Card.Body style={{ width: "50%" }}>
-                <ul
+                  <ul
                     style={{
-                      padding:0,
-                      display: "flex",    
+                      padding: 0,
+                      display: "flex",
                       flexWrap: "wrap",
                       listStyle: "none",
                     }}
                   >
                     {this.state.referansListe.map((item) => (
-                      <li style={{display: "flex" }}>
-                        <article style={{display: "flex", margin:10}}>
-                          <Button 
+                      <li style={{ display: "flex" }}>
+                        <article style={{ display: "flex", margin: 10 }}>
+                          <Button
                             onClick={() => this.referansSil(item)}
                             variant="danger"
                             size="sm"
                           >
                             x
                           </Button>
-                          <div style={{ marginLeft: 4 }}> {item.ad}</div>
+                          <div style={{ marginLeft: 4 }}> {item.Sayi}</div>
                         </article>
                       </li>
                     ))}
@@ -315,7 +486,6 @@ export default class App extends Component {
               </Card>
             </section>
           </Modal.Body>
-         
         </Modal>
 
         <button
