@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Document, Page } from "react-pdf";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -85,17 +86,22 @@ export default class App extends Component {
       return;
     }
 
+    var noListe = dosyaAd.split("-");
 
-    var noListe=dosyaAd.split("-");
+    let fark = parseInt(noListe[1]) - parseInt(noListe[0]);
 
-    let fark=parseInt(noListe[1])-parseInt(noListe[0]);
-
-    if(fark<0)
-    {
+    if (fark < 0) {
       alert("ikinci sayı birinciden büyük olmalı");
       return;
     }
 
+    // const loadingTask = Document.getDocument(dosyaAd);
+
+    // Document.getDocument(dosyaAd).promise.then(function (doc) {
+    //   var numPages = doc.numPages;
+    //   console.log("# Document Loaded");
+    //   console.log("Number of Pages: " + numPages);
+    // });
 
     let dosyalar = this.state.yukluDosyalar;
     dosyalar.push(dosyaAd);
@@ -290,6 +296,7 @@ export default class App extends Component {
                   <Form.Group inline controlId="exampleForm.ControlInput1">
                     <Form.Label>Sıra No</Form.Label>
                     <Form.Control
+                      placeholder="Başlayış"
                       type="text"
                       onChange={(e) =>
                         this.handleEkFormModelChange("SiraNo", e.target.value)
