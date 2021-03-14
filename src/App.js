@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+
 import "bootstrap/dist/css/bootstrap.min.css";
 
 import "froala-editor/js/froala_editor.pkgd.min.js";
@@ -49,10 +50,11 @@ export default class App extends Component {
       yukluDosyalar: [],
       ekListe: [],
       referansListe: [],
-      ekFormModel:{}
+      ekFormModel: {},
     };
 
     this.myRef = React.createRef();
+    this.hiddenFileInput = React.createRef();
 
     this.state.yukluDosyalar.push("1.pdf");
     this.state.yukluDosyalar.push("2.pdf");
@@ -70,9 +72,44 @@ export default class App extends Component {
   };
 
   dosyaYukle = () => {
+    this.hiddenFileInput.current.click();
+  };
+
+  onFileChanged = (event) => {
+    let dosyaAd = event.target.files[0].name;
+
+    var tireVarMi = dosyaAd.includes("-");
+
+    if (tireVarMi === false) {
+      alert("Dosya Adında - olmalı");
+      return;
+    }
+
+
+    var noListe=dosyaAd.split("-");
+
+    let fark=parseInt(noListe[1])-parseInt(noListe[0]);
+
+    if(fark<0)
+    {
+      alert("ikinci sayı birinciden büyük olmalı");
+      return;
+    }
+
+
     let dosyalar = this.state.yukluDosyalar;
-    var dosya = prompt("Yüklenecek Dosya Adı");
-    dosyalar.push(dosya);
+    dosyalar.push(dosyaAd);
+
+    // post işlemi sonra aktif edilecek
+    //  const formData = new FormData();
+
+    //  formData.append(
+    //    "myFile",
+    //    this.state.selectedFile,
+    //    this.state.selectedFile.name
+    //  );
+
+    //  axios.post("sharepoint adres", formData);
 
     this.setState({ yukluDosyalar: dosyalar });
   };
@@ -94,8 +131,6 @@ export default class App extends Component {
     liste.splice(index, 1);
     this.setState({ ekListe: liste });
   };
-
- 
 
   getCaretCoordinates = () => {
     let x = 0,
@@ -158,20 +193,16 @@ export default class App extends Component {
     this.setState({ isShow: true });
   };
 
+  handleEkFormModelChange = (fieldName, value) => {
+    console.log(fieldName, value);
 
-  handleEkFormModelChange = (fieldName,value) => {
-
-    console.log(fieldName,value);
-
-    var ekFormModelData=this.state.ekFormModel;
-    ekFormModelData[fieldName]=value;
+    var ekFormModelData = this.state.ekFormModel;
+    ekFormModelData[fieldName] = value;
 
     this.setState({
-      ekFormModel: ekFormModelData
+      ekFormModel: ekFormModelData,
     });
   };
-
-
 
   ekEkleShowForm = () => {
     this.setState({ isShowEkForm: true });
@@ -180,9 +211,6 @@ export default class App extends Component {
   refEkleShowForm = () => {
     this.setState({ isShowRefForm: true });
   };
-
-
-
 
   referansSil = (item) => {
     let liste = this.state.referansListe;
@@ -195,7 +223,7 @@ export default class App extends Component {
   handleCloseEkForm = (onayText) => {
     this.setState({ isShowEkForm: false });
 
-    var formData=this.state.ekFormModel;
+    var formData = this.state.ekFormModel;
 
     console.log(formData);
 
@@ -203,25 +231,34 @@ export default class App extends Component {
 
     let liste = this.state.ekListe;
 
-    let ekModel = { Sayi: formData.Sayi, yukluDosya: "" };
+    let ekModel = {
+      Sayi: formData.Sayi,
+      SiraNo: formData.SiraNo,
+      Mahiyeti: formData.Mahiyeti,
+      yukluDosya: "",
+    };
     liste.push(ekModel);
 
     this.setState({ ekListe: liste });
   };
 
-
   handleCloseRefForm = (onayText) => {
     this.setState({ isShowRefForm: false });
 
-    var formData=this.state.ekFormModel;
+    var formData = this.state.ekFormModel;
 
-    console.log(formData);
+    console.log("ref", formData);
 
     if (onayText !== "Ok") return;
 
     let liste = this.state.referansListe;
 
-    let ekModel = { Sayi: formData.Sayi, yukluDosya: "" };
+    let ekModel = {
+      Sayi: formData.Sayi,
+      SiraNo: formData.SiraNo,
+      Mahiyeti: formData.Mahiyeti,
+      yukluDosya: "",
+    };
     liste.push(ekModel);
 
     this.setState({ referansListe: liste });
@@ -238,6 +275,7 @@ export default class App extends Component {
         }}
       >
         <Modal
+          id="Ek"
           show={this.state.isShowEkForm}
           onHide={() => this.handleCloseEkForm("Cancel")}
           animation={false}
@@ -251,7 +289,13 @@ export default class App extends Component {
                 <Col>
                   <Form.Group inline controlId="exampleForm.ControlInput1">
                     <Form.Label>Sıra No</Form.Label>
-                    <Form.Control type="text" placeholder="" />
+                    <Form.Control
+                      type="text"
+                      onChange={(e) =>
+                        this.handleEkFormModelChange("SiraNo", e.target.value)
+                      }
+                      placeholder=""
+                    />
                   </Form.Group>
                 </Col>
 
@@ -265,7 +309,7 @@ export default class App extends Component {
                   </Form.Group>
                 </Col>
 
-                <Col/>
+                <Col />
               </Row>
 
               <Row>
@@ -278,22 +322,36 @@ export default class App extends Component {
                 <Col>
                   <Form.Group controlId="exampleForm.ControlSelect1">
                     <Form.Label>Sayı</Form.Label>
-                    <Form.Control type="text" 
-                      onChange={(e)=>this.handleEkFormModelChange("Sayi",e.target.value)}  placeholder="" />
+                    <Form.Control
+                      type="text"
+                      onChange={(e) =>
+                        this.handleEkFormModelChange("Sayi", e.target.value)
+                      }
+                      placeholder=""
+                    />
                   </Form.Group>
                 </Col>
 
                 <Col>
-                  <Form.Group controlId="exampleForm.ControlTextarea1">
+                  <Form.Group>
                     <Form.Label>Sayfa Adedi</Form.Label>
                     <Form.Control inline type="number" placeholder="" />
                   </Form.Group>
                 </Col>
               </Row>
 
-              <Form.Group controlId="exampleForm.ControlTextarea1">
-                <Form.Label>Mahiyeti</Form.Label>
-                <Form.Control as="textarea" rows={3} />
+              <Form.Group>
+                <Form.Label>Mahiyetixxx</Form.Label>
+
+                <Form.Control
+                  type="text"
+                  as="textarea"
+                  rows={2}
+                  onChange={(e) =>
+                    this.handleEkFormModelChange("Mahiyeti", e.target.value)
+                  }
+                  placeholder=""
+                />
               </Form.Group>
             </Form>
           </Modal.Body>
@@ -313,32 +371,50 @@ export default class App extends Component {
           </Modal.Footer>
         </Modal>
 
-
         <Modal
+          id="Ref"
           show={this.state.isShowRefForm}
           onHide={() => this.handleCloseRefForm("Cancel")}
           animation={false}
         >
           <Modal.Header closeButton>
-            <Modal.Title>Ek Formu</Modal.Title>
+            <Modal.Title>Referan Formu</Modal.Title>
           </Modal.Header>
           <Modal.Body>
             <Form>
               <Row>
                 <Col>
-                <Form.Group controlId="exampleForm.ControlSelect1">
+                  <Form.Group controlId="exampleForm.ControlSelect1">
                     <Form.Label>Sayı</Form.Label>
-                    <Form.Control type="text" 
-                      onChange={(e)=>this.handleEkFormModelChange("Sayi",e.target.value)}  placeholder="" />
+                    <Form.Control
+                      type="text"
+                      onChange={(e) =>
+                        this.handleEkFormModelChange("SiraNo", e.target.value)
+                      }
+                      placeholder=""
+                    />
                   </Form.Group>
                 </Col>
 
-                <Col/>
+                <Col />
               </Row>
 
-             
-
-            
+              <Row>
+                <Col>
+                  <Form.Group>
+                    <Form.Label>Mahiyeti</Form.Label>
+                    <Form.Control
+                      type="text"
+                      as="textarea"
+                      rows={2}
+                      onChange={(e) =>
+                        this.handleEkFormModelChange("Mahiyeti", e.target.value)
+                      }
+                      placeholder=""
+                    />
+                  </Form.Group>
+                </Col>
+              </Row>
             </Form>
           </Modal.Body>
           <Modal.Footer>
@@ -356,8 +432,6 @@ export default class App extends Component {
             </Button>
           </Modal.Footer>
         </Modal>
-
-
 
         <Modal size="lg" show={this.state.isShow} onHide={this.handleClose}>
           <Modal.Header closeButton>
@@ -396,13 +470,22 @@ export default class App extends Component {
                 ))}
               </nav>
 
-              <Button
-                variant="outline-primary"
-                style={{ width: "10%", marginLeft: 10 }}
-                onClick={() => this.dosyaYukle()}
-              >
-                Dosya Yükle
-              </Button>
+              <div>
+                <input
+                  type="file"
+                  ref={this.hiddenFileInput}
+                  onChange={(e) => this.onFileChanged(e)}
+                  style={{ display: "none" }}
+                />
+
+                <Button
+                  variant="outline-primary"
+                  style={{ width: "100px", marginLeft: 10 }}
+                  onClick={() => this.dosyaYukle()}
+                >
+                  Dosya Yükle
+                </Button>
+              </div>
             </section>
 
             <section style={{ display: "flex" }}>
@@ -439,7 +522,8 @@ export default class App extends Component {
                           >
                             x
                           </Button>
-                          <div style={{ marginLeft: 4 }}> {item.Sayi}</div>
+                          <div style={{ marginLeft: 4 }}> {item.SiraNo}</div>
+                          <div style={{ marginLeft: 4 }}> {item.Mahiyeti}</div>
                         </article>
                       </li>
                     ))}
@@ -477,7 +561,8 @@ export default class App extends Component {
                           >
                             x
                           </Button>
-                          <div style={{ marginLeft: 4 }}> {item.Sayi}</div>
+                          <div style={{ marginLeft: 4 }}> {item.SiraNo}</div>
+                          <div style={{ marginLeft: 4 }}> {item.Mahiyeti}</div>
                         </article>
                       </li>
                     ))}
@@ -494,18 +579,19 @@ export default class App extends Component {
           accesskey="h"
           style={{
             position: "absolute",
-            top: this.state.top,
-            right: 0,
+            top: this.state.top - 20,
+            right: -20,
             borderColor: "coral",
+            border: "0px",
             zIndex: 300,
             boxShadow:
               "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
-            background: "red",
+            background: "rgba(255, 0, 0, 0.2)",
             color: "white",
           }}
           onClick={() => this.handleShow()}
         >
-          İlişik Ekle (alt+h)
+          İlişik Ekle <br /> (alt+h)
         </button>
 
         <FroalaEditor
